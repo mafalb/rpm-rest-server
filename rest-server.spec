@@ -39,10 +39,7 @@ BuildRequires: golang(github.com/spf13/cobra)
 BuildRequires: golang(golang.org/x/crypto/bcrypt)
 
 BuildRequires: golang(github.com/gorilla/handlers)
-
-# ?
-#BuildRequires: golang(github.com/goji/goji)
-BuildRequires: golang-github-zenazn-goji-devel
+BuildRequires: golang(github.com/goji/goji)
 
 Requires: restic
 
