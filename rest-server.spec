@@ -19,27 +19,19 @@ Source0: %{gosource}
 # TestJoin is already fixed in HEAD
 Patch0: TestJoin.patch
 
-# ?
-#Restic does not compile for the following archs
+# from the spec file for restic
+# Restic does not compile for the following archs
 ExcludeArch: s390x
 
-# ?
-BuildRequires: golang(github.com/coreos/go-systemd/activation)
-
 BuildRequires: golang(github.com/gorilla/handlers)
-BuildRequires: golang(github.com/minio/sha256-simd)
 BuildRequires: golang(github.com/miolini/datacounter)
-
 BuildRequires: golang(github.com/prometheus/client_golang/prometheus)
 BuildRequires: golang(github.com/prometheus/client_golang/prometheus/promhttp)
-
 BuildRequires: golang(github.com/spf13/cobra)
-
-# ?
+BuildRequires: golang(goji.io)
+BuildRequires: golang(goji.io/middleware)
+BuildRequires: golang(goji.io/pat)
 BuildRequires: golang(golang.org/x/crypto/bcrypt)
-
-BuildRequires: golang(github.com/gorilla/handlers)
-BuildRequires: golang(github.com/goji/goji)
 
 Requires: restic
 
