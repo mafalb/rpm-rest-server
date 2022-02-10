@@ -10,7 +10,7 @@ Version:                0.10.0
 Rest Server is a high performance HTTP server that implements restic's REST backend API. It provides secure and efficient way to backup data remotely, using restic backup client via the rest: URL.}
 
 Name:    rest-server
-Release: 2%{?dist}
+Release: 1%{?dist}
 Summary: High performance HTTP server that implements restic's REST backend API
 
 License: BSD
