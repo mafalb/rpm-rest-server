@@ -1,0 +1,16 @@
+[Unit]
+Description=Rest Server
+After=network.target
+
+[Service]
+Type=simple
+Environment="PATH=/var/lib/rest-server"
+EnvironmentFile=/etc/sysconfig/httpd
+User=restic
+Group=restic
+ExecStart=/usr/libexec/rest-server --path ${PATH} ${OPTIONS}
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

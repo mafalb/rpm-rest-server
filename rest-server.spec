@@ -16,6 +16,9 @@ Summary: High performance HTTP server that implements restic's REST backend API
 License: BSD
 URL:     %{gourl}
 Source0: %{gosource}
+Source1: rest-server.logrotate
+Source2: rest-server.service
+Source3: rest-server.sysconfig
 
 # is already fixed in HEAD
 Patch0: TestJoin.patch
@@ -33,8 +36,10 @@ BuildRequires: golang(goji.io)
 BuildRequires: golang(goji.io/middleware)
 BuildRequires: golang(goji.io/pat)
 BuildRequires: golang(golang.org/x/crypto/bcrypt)
+BuildRequires: systemd-rpm-macros
 
-Requires: restic
+# we need htpasswd command
+Requires: httpd-tools
 
 %description
 %{common_description}
@@ -47,8 +52,29 @@ Requires: restic
 %gobuild -o %{gobuilddir}/bin/rest-server %{goipath}/cmd/rest-server
 
 %install
-install -m 0755 -vd %{buildroot}%{_bindir}
-install -p -m 755 %{gobuilddir}/bin/rest-server %{buildroot}%{_bindir}
+# Install rest-server
+install -m 755 -vd %{buildroot}%{_libexecdir}
+install -p -m 755 %{gobuilddir}/bin/rest-server %{buildroot}%{_libexecdir}
+
+# Install logrotate config
+install -m 755 -vd %{buildroot}/etc/logrotate.d
+install -m 644 -p %{SOURCE1} %{buildroot}/etc/logrotate.d/rest-server
+
+# Install systemd service file
+install -m 755 -vd %{buildroot}%{_unitdir}
+install -p -m 755 %{SOURCE2} %{buildroot}%{_unitdir}/rest-server.service
+
+# Install environment file
+install -m 755 -vd %{buildroot}%{_sysconfdir}/sysconfig
+install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/rest-server
+
+# Install log dir
+install -m 700 -vd %{buildroot}%{_localstatedir}/log/rest-server
+
+%post
+if [ $1 -gt 1 ] ; then
+touch %{_libexecdir}/rest-server/.htpasswd
+fi
 
 %if %{with check}
 %check
@@ -58,7 +84,11 @@ install -p -m 755 %{gobuilddir}/bin/rest-server %{buildroot}%{_bindir}
 %files
 %license LICENSE
 %doc CHANGELOG.md README.md
-%{_bindir}/rest-server
+%config(noreplace) %{_sysconfdir}/logrotate.d/rest-server
+%config(noreplace) %{_sysconfdir}/sysconfig/rest-server
+%{_libexecdir}/rest-server
+/%{_unitdir}/rest-server.service
+%attr(0700,root,root) %dir %{_localstatedir}/log/rest-server
 
 %changelog
 * Sat Jan 22 2022 Markus Falb <jeremy@mafalb.at> - 0.10.0-1

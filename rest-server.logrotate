@@ -1,0 +1,12 @@
+# Note that logs are not compressed unless "compress" is configured,
+# which can be done either here or globally in /etc/logrotate.conf.
+
+/var/log/rest-server/*log {
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /bin/systemctl restart rest-server.service > /dev/null 2>/dev/null || true
+    endscript
+}

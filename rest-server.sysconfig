@@ -1,0 +1,3 @@
+PATH=/var/lib/rest-server
+OPTIONS=--append-only
+#OPTIONS=--append-only --prometheus
