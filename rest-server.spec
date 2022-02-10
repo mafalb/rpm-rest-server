@@ -10,7 +10,7 @@ Version:                0.10.0
 Rest Server is a high performance HTTP server that implements restic's REST backend API. It provides secure and efficient way to backup data remotely, using restic backup client via the rest: URL.}
 
 Name:    rest-server
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: High performance HTTP server that implements restic's REST backend API
 
 License: BSD
@@ -19,6 +19,7 @@ Source0: %{gosource}
 Source1: rest-server.logrotate
 Source2: rest-server.service
 Source3: rest-server.sysconfig
+Source4: rest-server.sysusers
 
 # is already fixed in HEAD
 Patch0: TestJoin.patch
@@ -71,9 +72,15 @@ install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/rest-server
 # Install log dir
 install -m 700 -vd %{buildroot}%{_localstatedir}/log/rest-server
 
+# Install data dir
+install -m 700 -vd %{buildroot}%{_sharedstatedir}/rest-server
+
+%pre
+%sysusers_create_compat %{SOURCE4}
+
 %post
 if [ $1 -gt 1 ] ; then
-touch %{_libexecdir}/rest-server/.htpasswd
+install -m 640 -u root -g rest-server %{_sharedstatedir}/rest-server/.htpasswd
 fi
 
 %if %{with check}
@@ -89,6 +96,8 @@ fi
 %{_libexecdir}/rest-server
 /%{_unitdir}/rest-server.service
 %attr(0700,root,root) %dir %{_localstatedir}/log/rest-server
+%attr(0700,rest-server,rest-server) %dir %{_sharedstatedir}/rest-server
+%{_sysusersdir}/rest-server.conf
 
 %changelog
 * Sat Jan 22 2022 Markus Falb <jeremy@mafalb.at> - 0.10.0-1
