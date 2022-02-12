@@ -75,6 +75,10 @@ install -m 700 -vd %{buildroot}%{_localstatedir}/log/rest-server
 # Install data dir
 install -m 700 -vd %{buildroot}%{_sharedstatedir}/rest-server
 
+# Install sysusers file
+install -m 755 -vd %{buildroot}%{_sysusersdir}
+install -p -m 644 %{SOURCE4} %{buildroot}%{_sysusersdir}/rest-server.conf
+
 %pre
 %sysusers_create_compat %{SOURCE4}
 
